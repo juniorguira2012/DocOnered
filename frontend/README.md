@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# DocOnered
-=======
 # 🚀 OneredRD - Dashboard de Gestión de Proyectos & Documentación
 
 Bienvenido a **OneredRD**, una plataforma integral basada en React y Material UI diseñada para optimizar el flujo de trabajo, la gestión de tareas mediante tableros Kanban y la organización de documentación técnica.
@@ -72,5 +69,4 @@ Web: oneredrd.info
 
 Instagram: @oneredrd
 
-Facebook: Oneredrd# DocOnered
->>>>>>> 690ccfd (first commit)
+Facebook: Oneredrd
