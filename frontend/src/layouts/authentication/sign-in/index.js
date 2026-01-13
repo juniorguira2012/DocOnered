@@ -10,7 +10,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar"; // Importamos las alertas
+import MDSnackbar from "components/MDSnackbar";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -42,7 +42,6 @@ function Basic() {
     e.preventDefault();
 
     try {
-      // 1. Hacemos la petición al backend
       const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: {
@@ -54,7 +53,7 @@ function Basic() {
       const data = await response.json();
 
       if (data.success) {
-        // 2. Si el login es exitoso, guardamos en el storage y contexto
+        // 1. Preparamos el objeto del usuario
         const userToLogin = {
           nombre: data.user.nombre,
           email: data.user.email,
@@ -62,18 +61,25 @@ function Basic() {
           foto: data.user.foto || "",
         };
 
+        // 2. GUARDADO EN LOCALSTORAGE (Clave para que el Sidebar funcione)
         localStorage.setItem("user_active", JSON.stringify(userToLogin));
+        localStorage.setItem("userRole", data.user.rol); // Usado en routes.js
+        localStorage.setItem("userName", data.user.nombre); // Usado para saludos
+
+        // 3. Guardamos en el Contexto global de la App
         setAuthUser(dispatch, userToLogin);
         
-        // Redirigir al dashboard
+        // 4. Redirigir y RECARGAR 
+        // La recarga es vital para que routes.js vuelva a leer el userRole nuevo
         navigate("/dashboard");
+        window.location.reload(); 
+        
       } else {
-        // 3. Si hay error (401 o 404), mostramos el Snackbar
         setErrorSB(true);
       }
     } catch (error) {
       console.error("Error al conectar con el servidor:", error);
-      setErrorSB(true); // También mostramos error si el servidor está apagado
+      setErrorSB(true);
     }
   };
 
@@ -100,7 +106,6 @@ function Basic() {
             mb={0}
             sx={{ filter: "brightness(0) invert(1)" }}
           />
-
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={0}>
             DocONERED
           </MDTypography>
@@ -166,7 +171,6 @@ function Basic() {
         </MDBox>
       </Card>
 
-      {/* NOTIFICACIÓN DE ERROR EN EL LOGIN */}
       <MDSnackbar
         color="error"
         icon="warning"

@@ -17,7 +17,7 @@ import DataTable from "examples/Tables/DataTable";
 
 function Users() {
   const [usuarios, setUsuarios] = useState([]);
-  const adminMasterEmail = "admin@oneredrd.info";
+  const superUserEmails = ["admin@oneredrd.com", "oneredrd@oneredrd.com"];
 
   // --- ESTADOS PARA NOTIFICACIONES ---
   const [notification, setNotification] = useState({ open: false, message: "", color: "success" });
@@ -40,17 +40,22 @@ function Users() {
   const [nuevoPass, setNuevoPass] = useState("");
   const [nuevoRol, setNuevoRol] = useState("lector");
 
-  useEffect(() => { cargarUsuarios(); }, []);
+  useEffect(() => { cargarUsuarios(); },);
 
   const cargarUsuarios = async () => {
-    try {
-      const response = await fetch("http://localhost:4000/api/users");
-      const data = await response.json();
-      setUsuarios(data.map((u) => ({ ...u, isMaster: u.email === adminMasterEmail })));
-    } catch (error) {
-      showError("Error de conexión con la base de datos");
-    }
-  };
+  try {
+    const response = await fetch("http://localhost:4000/api/users");
+    const data = await response.json();
+    const listaProcesada = data.map((u) => ({
+      ...u,
+      // Ahora verifica si el email está en nuestra lista de super usuarios
+      isMaster: superUserEmails.includes(u.email),
+    }));
+    setUsuarios(listaProcesada);
+  } catch (error) {
+    showError("Error de conexión con la base de datos");
+  }
+};
 
   const handleCreate = async () => {
     if (!nuevoNombre || !nuevoEmail || !nuevoPass) {
