@@ -26,7 +26,7 @@ const bgImage =
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const [controller, dispatch] = useMaterialUIController();
+  const [, dispatch] = useMaterialUIController();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -38,37 +38,42 @@ function Basic() {
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
 
-    const adminMaster = {
-      email: "admin@oneredrd.info",
-      pass: "admin123",
-      nombre: "Admin Onered",
-      rol: "admin",
-    };
+    try {
+      // 1. Hacemos la petición al backend
+      const response = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const usuariosRegistrados = JSON.parse(localStorage.getItem("usuarios_registrados")) || [];
-    const todosLosUsuarios = [adminMaster, ...usuariosRegistrados];
+      const data = await response.json();
 
-    const usuarioEncontrado = todosLosUsuarios.find(
-      (u) => u.email === email && u.pass === password
-    );
+      if (data.success) {
+        // 2. Si el login es exitoso, guardamos en el storage y contexto
+        const userToLogin = {
+          nombre: data.user.nombre,
+          email: data.user.email,
+          rol: data.user.rol,
+          foto: data.user.foto || "",
+        };
 
-    if (usuarioEncontrado) {
-      const userToLogin = {
-        nombre: usuarioEncontrado.nombre,
-        email: usuarioEncontrado.email,
-        rol: usuarioEncontrado.rol,
-        foto: "",
-      };
-
-      localStorage.setItem("user_active", JSON.stringify(userToLogin));
-      setAuthUser(dispatch, userToLogin);
-      navigate("/dashboard");
-    } else {
-      // EN LUGAR DE ALERT, ACTIVAMOS EL SNACKBAR
-      setErrorSB(true);
+        localStorage.setItem("user_active", JSON.stringify(userToLogin));
+        setAuthUser(dispatch, userToLogin);
+        
+        // Redirigir al dashboard
+        navigate("/dashboard");
+      } else {
+        // 3. Si hay error (401 o 404), mostramos el Snackbar
+        setErrorSB(true);
+      }
+    } catch (error) {
+      console.error("Error al conectar con el servidor:", error);
+      setErrorSB(true); // También mostramos error si el servidor está apagado
     }
   };
 

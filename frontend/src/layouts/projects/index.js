@@ -37,7 +37,7 @@ import Footer from "examples/Footer";
 import { useMaterialUIController } from "context";
 
 // Componente del Tablero
-import Board from "./Board";
+//import Board from "./Board";
 
 import { useNavigate } from "react-router-dom";
 
@@ -46,6 +46,22 @@ function Projects() {
   const [controller] = useMaterialUIController();
   const { user } = controller;
   const isAdmin = user?.rol === "admin";
+
+//   const [proyectos, setProyectos] = useState([]);
+//   useEffect(() => {
+//   // Función para traer datos del backend
+//   const fetchProjects = async () => {
+//     try {
+//       const response = await fetch('http://localhost:4000/api/projects');
+//       const data = await response.json();
+//       setProyectos(data);
+//     } catch (error) {
+//       console.error("Error cargando proyectos:", error);
+//     }
+//   };
+
+//   fetchProjects();
+// }, []);
 
   // Estado para todos los usuarios (sincronizado con usuarios_registrados)
   const [allUsers, setAllUsers] = useState([]);
@@ -56,7 +72,7 @@ function Projects() {
   });
 
   // viewProject ya no será necesario para renderizar aquí, pero lo mantenemos para no romper handleUpdate si lo usas
-  const [viewProject, setViewProject] = useState(null);
+  //const [viewProject, setViewProject] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState(null);
   const [newName, setNewName] = useState("");
@@ -106,11 +122,11 @@ function Projects() {
     return Math.round(sumaTotal / project.tareas.length);
   };
 
-  const handleUpdateProject = (updatedProject) => {
-    setProjects((prev) => prev.map((p) => (p.id === updatedProject.id ? updatedProject : p)));
-    setViewProject(updatedProject);
-    registrarActividad(`Tarea actualizada en Proyecto: ${updatedProject.nombre}`, "editó");
-  };
+  // const handleUpdateProject = (updatedProject) => {
+  //   setProjects((prev) => prev.map((p) => (p.id === updatedProject.id ? updatedProject : p)));
+  //   setViewProject(updatedProject);
+  //   registrarActividad(`Tarea actualizada en Proyecto: ${updatedProject.nombre}`, "editó");
+  // };
 
   const saveProjectChanges = () => {
     if (!newName.trim()) return;
